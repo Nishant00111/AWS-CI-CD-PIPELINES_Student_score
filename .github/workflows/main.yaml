@@ -86,11 +86,9 @@ jobs:
         run: |
          docker pull ${{secrets.AWS_ECR_LOGIN_URI}}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
          
-      - name: Run cleanup script
+      - name: Stop and remove  container if running
         run: |
-          docker stop $(docker ps -aq)
-          docker rm $(docker ps -aq)
-          docker rmi -f $(docker images -aq)
+         docker ps -q --filter "name=mltest" | grep -q . && docker stop mltest && docker rm -fv mltest
        
       - name: Run Docker Image to serve users
         run: |
