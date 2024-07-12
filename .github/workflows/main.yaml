@@ -80,9 +80,12 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-      - name: Stop and remove  container if running
+        
+      - name: Run cleanup script
         run: |
-         docker ps -q --filter "name=mltest" | grep -q . && docker stop mltest && docker rm -fv mltest
+          docker stop $(docker ps -aq)
+          docker rm $(docker ps -aq)
+          docker rmi -f $(docker images -aq)
       
       - name: Pull latest images
         run: |
